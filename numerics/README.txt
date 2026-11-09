@@ -19,7 +19,7 @@ Analysis and checks
 
 analyse.py uses NumPy, SciPy and Matplotlib. It reads results/tree_XX.csv,
 writes summary CSVs back to results/, prepares the figures in ../figures/
-and exports the two original LaTeX table bodies to ../tables/. It checks the mass equation
+and exports the normalisation and extrapolation table bodies to ../tables/. It checks the mass equation
 against a separate ODE integration and checks classical probabilities and
 tails against exact formulas. observables.py contains the extrapolation,
 root, complementary distribution and table routines. check.py independently
@@ -110,6 +110,9 @@ validation_intercepts.csv uses the original 160 trees, with the same paths
 in both fits. It gives the intercept and its Monte Carlo standard error
 using all four sizes, the same quantities using the three largest sizes,
 and the paired difference (three minus four) with its standard error.
+The generated fit_rows.tex shows both intercepts with their own standard
+errors, the four-size slope and the theoretical limit. The three-size
+columns are recomputed from the same per-tree checkpoints by analyse.py.
 Each unweighted least-squares fit uses one tree's observed scaled weights.
 These standard errors describe simulation variation conditional on the fit.
 

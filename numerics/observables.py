@@ -144,9 +144,18 @@ def export_table_rows(results, tables):
         out.write("}\n")
     with (tables/"fit_rows.tex").open("w") as out:
         out.write(r"\newcommand{\fitrows}{%"+"\n")
-        for d in fit[fit["alpha"]>0]:
-            fields = [f'{d["alpha"]:.2f}', f'{d["intercept"]:.5f}',
-                      f'{d["intercept_se"]:.5f}', f'{d["slope"]:.3f}',
-                      f'{d["limit"]:.5f}']
-            out.write(" & ".join(fields)+r" \\"+"\n")
+        for full_fit in fit[fit["alpha"] > 0]:
+            alpha = full_fit["alpha"]
+            raw = np.genfromtxt(results / f"tree_{round(100 * alpha):02d}.csv",
+                                names=True, delimiter=",")
+            largest_sizes = np.unique(raw["n"])[1:]
+            three_size_intercepts = pathwise_coefficients(raw, alpha, largest_sizes)[0]
+            fields = [
+                f"{alpha:.2f}", f'{full_fit["intercept"]:.6f}',
+                f'{full_fit["intercept_se"]:.6f}', f'{full_fit["slope"]:.3f}',
+                f"{three_size_intercepts.mean():.6f}",
+                f"{standard_error(three_size_intercepts):.6f}",
+                f'{full_fit["limit"]:.6f}',
+            ]
+            out.write(" & ".join(fields) + r" \\" + "\n")
         out.write("}\n")
