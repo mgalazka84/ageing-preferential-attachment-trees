@@ -17,6 +17,20 @@ def standard_error(values):
     return float(np.std(values, ddof=1) / np.sqrt(len(values)))
 
 
+def pathwise_coefficients(raw, alpha, sizes):
+    """Fit a + c*n**(alpha-1) to the selected checkpoints of each tree."""
+    sizes = np.asarray(sizes)
+    paths = []
+    for replicate in np.unique(raw["replicate"]):
+        records = raw[(raw["replicate"] == replicate) & np.isin(raw["n"], sizes)]
+        records = np.sort(records, order="n")
+        if not np.array_equal(records["n"], sizes):
+            raise ValueError("missing or duplicate checkpoint in a pathwise fit")
+        paths.append(records["T_scaled"])
+    design = np.column_stack((np.ones(len(sizes)), sizes ** (alpha - 1.0)))
+    return np.linalg.lstsq(design, np.array(paths).T, rcond=None)[0]
+
+
 def export(results, figures, exponent, integrated_weight, integrate_y, degree_pmf):
     alphas = (0., .25, .5, .75, .9)
     fit_rows, root_rows, tail_rows, pmf_rows = [], [], [], []
@@ -27,12 +41,7 @@ def export(results, figures, exponent, integrated_weight, integrate_y, degree_pm
         sizes = np.unique(raw["n"]).astype(int)
         runs = np.unique(raw["replicate"]).astype(int)
         beta = exponent(alpha)
-        design = np.column_stack((np.ones(len(sizes)), sizes ** (alpha-1)))
-        paths = np.array([[raw["T_scaled"][(raw["n"] == n)
-                                          & (raw["replicate"] == r)].item()
-                           for n in sizes] for r in runs])
-        # Regression is linear, so these means equal a fit to the four means.
-        coefficients = np.linalg.lstsq(design, paths.T, rcond=None)[0]
+        coefficients = pathwise_coefficients(raw, alpha, sizes)
         fit_rows.append((alpha, len(runs), coefficients[0].mean(),
                          standard_error(coefficients[0]), coefficients[1].mean(),
                          standard_error(coefficients[1]), 1/beta))

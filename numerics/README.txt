@@ -2,21 +2,23 @@ Numerical supplement
 Degree distributions and vertex growth in ageing preferential attachment trees
 Marek Gałązka and Hanna Wdowicka
 
-The numerical files in this directory reproduce the paper's three figures,
+The numerical files in this directory reproduce the three numerical figures,
 tables, and finite-tree diagnostics. Run the commands below from this directory.
-The five tree_XX.csv files contain the observations from the 160 simulated trees.
-The analysis does not need to regrow them.
+The five tree_XX.csv files contain the observations from the 160 million-vertex trees.
+The five validation_root_XX.csv.gz files contain 50,000 additional short trees.
+Both analyses can be run directly on the supplied records.
 
 Analysis and checks
 -------------------
   python check.py
   python analyse.py
+  python validate_finite_size.py
   c++ -O3 -std=c++17 -fopenmp-simd check_clock.cpp -o check_clock
   ./check_clock
 
 analyse.py uses NumPy, SciPy and Matplotlib. It reads results/tree_XX.csv,
 writes summary CSVs back to results/, prepares the figures in ../figures/
-and exports two LaTeX table bodies to ../tables/. It checks the mass equation
+and exports the two original LaTeX table bodies to ../tables/. It checks the mass equation
 against a separate ODE integration and checks classical probabilities and
 tails against exact formulas. observables.py contains the extrapolation,
 root, complementary distribution and table routines. check.py independently
@@ -81,3 +83,31 @@ remainder modulo 1024. Exponential factors below exp(-48) are discarded.
 The per-path product accumulates log1p(n^(-alpha)/T_n). At alpha=0 the
 normaliser is exactly 2(n-1). Direct checkpoints and small-size tests are
 documented in the manuscript.
+
+Finite-size validation
+----------------------
+  python validate_finite_size.py
+  # To regrow all short trees first, compile simulate.cpp as above, then run
+  python validate_finite_size.py --simulate ./simulate
+
+The study uses 10,000 trees of size 1,000 for each of the five ageing
+exponents. The sampler and seed formula are the same as in the main study.
+Replicate indices 64 through 10063 are retained, inclusive. Each seed occurs
+on one validation path only and is distinct from all main-study seeds.
+The compressed CSVs record the replicate, seed, size, root degree, root_A
+and root_Z. The deterministic no-ageing clock is checked against the
+product of 1 + 1/(2*(m-1)) from m=2 to n-1 for every classical replicate.
+
+validation_root_summary.csv gives the count, mean and Monte Carlo standard
+error (sample standard deviation divided by the square root of the count).
+The exact standard error is also given at zero ageing. There, with D the
+root degree and A its clock, E[D]=A and E[D*(D+1)]=2*(n-1), so Var(D/A)
+equals 2*(n-1)/A**2 - 1/A - 1. The script reproduces the validation panel
+of the normalisation table in ../tables/validation_rows.tex.
+
+validation_intercepts.csv uses the original 160 trees, with the same paths
+in both fits. It gives the intercept and its Monte Carlo standard error
+using all four sizes, the same quantities using the three largest sizes,
+and the paired difference (three minus four) with its standard error.
+Each unweighted least-squares fit uses one tree's observed scaled weights.
+These standard errors describe simulation variation conditional on the fit.

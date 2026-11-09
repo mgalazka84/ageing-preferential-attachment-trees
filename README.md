@@ -12,9 +12,12 @@ From the repository root, run the following commands with Python, NumPy, SciPy a
 cd numerics
 python check.py
 python analyse.py
+python validate_finite_size.py
 ```
 
-The analysis reads the five raw simulation files in [numerics/results](numerics/results). Each row records one tree at one size. The 160 independent trees were observed at four sizes, from 1,000 to 1,000,000 vertices, giving 640 observations in total. The four rows for a given seed belong to the same tree.
+The main analysis reads the five tree_XX.csv files in [numerics/results](numerics/results). Each row records one tree at one size. The 160 independent trees were observed at four sizes, from 1,000 to 1,000,000 vertices, giving 640 observations in total. The four rows for a given seed belong to the same tree.
+
+A separate check uses 10,000 new trees of size 1,000 for each of the five ageing exponents. The [root-martingale means](numerics/results/validation_root_summary.csv) can be reproduced from the five compressed per-tree CSVs. The [paired extrapolations](numerics/results/validation_intercepts.csv) compare three versus four observation sizes on the same million-vertex trees.
 
 The [reproduction instructions](numerics/README.txt) give the compiler flags, exact seeds, commands for regrowing the trees, a separate numerical check of the root normalisation, and definitions of the data columns.
 
