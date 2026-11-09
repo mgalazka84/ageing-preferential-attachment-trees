@@ -6,6 +6,7 @@ The numerical files in this directory reproduce the three numerical figures,
 tables, and finite-tree diagnostics. Run the commands below from this directory.
 The five tree_XX.csv files contain the observations from the 160 million-vertex trees.
 The five validation_root_XX.csv.gz files contain 50,000 additional short trees.
+validation_classical_100k.csv.gz contains a separate 100,000 short trees at zero ageing.
 Both analyses can be run directly on the supplied records.
 
 Analysis and checks
@@ -111,3 +112,17 @@ using all four sizes, the same quantities using the three largest sizes,
 and the paired difference (three minus four) with its standard error.
 Each unweighted least-squares fit uses one tree's observed scaled weights.
 These standard errors describe simulation variation conditional on the fit.
+
+Independent repetition at zero ageing
+-------------------------------------
+The same validation command also analyses validation_classical_100k.csv.gz
+and writes validation_classical_summary.csv. The repetition uses n=1,000,
+alpha=0 and replicate indices 10064 through 110063, inclusive. It uses the
+same sampler and file columns as the five original validation batches.
+Including --simulate regrows all six batches. Earlier replicate indices
+encountered while starting the sampler are discarded for this repetition.
+
+For the tail-count comparison at alpha=0.50, multiply the mixture and
+power_asymptotic columns of tails.csv by runs*n to obtain the two limiting
+benchmarks for the pooled counts. The maximum degree of each main-study tree
+is in tree_50.csv at its million-vertex checkpoint.

@@ -17,7 +17,7 @@ python validate_finite_size.py
 
 The main analysis reads the five tree_XX.csv files in [numerics/results](numerics/results). Each row records one tree at one size. The 160 independent trees were observed at four sizes, from 1,000 to 1,000,000 vertices, giving 640 observations in total. The four rows for a given seed belong to the same tree.
 
-A separate check uses 10,000 new trees of size 1,000 for each of the five ageing exponents. The [root-martingale means](numerics/results/validation_root_summary.csv) can be reproduced from the five compressed per-tree CSVs. The [paired extrapolations](numerics/results/validation_intercepts.csv) compare three versus four observation sizes on the same million-vertex trees.
+A separate check uses 10,000 new trees of size 1,000 for each of the five ageing exponents. The [root-martingale means](numerics/results/validation_root_summary.csv) can be reproduced from the five compressed per-tree CSVs. A [separate zero-ageing check](numerics/results/validation_classical_summary.csv) uses [100,000 additional trees](numerics/results/validation_classical_100k.csv.gz), with distinct generator seeds. The [paired extrapolations](numerics/results/validation_intercepts.csv) compare three versus four observation sizes on the same million-vertex trees.
 
 The [reproduction instructions](numerics/README.txt) give the compiler flags, exact seeds, commands for regrowing the trees, a separate numerical check of the root normalisation, and definitions of the data columns.
 
